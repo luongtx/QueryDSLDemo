@@ -26,43 +26,42 @@ public class CustomerServiceImpl implements CustomerService {
 
     private Page<Customer> find(CustomerFilterCriteria criteria, String keyword) {
         QCustomer customer = QCustomer.customer;
-        var keywordMatch = customer.isNotNull();
+        var customerPredicate = customer.isNotNull();
         if (!StringUtils.isNullOrEmpty(keyword)) {
-            keywordMatch = likeExp(customer.firstName, keyword)
+            customerPredicate = customerPredicate.and(likeExp(customer.firstName, keyword)
                     .or(likeExp(customer.lastName, keyword))
-                    .or(likeExp(customer.email, keyword));
+                    .or(likeExp(customer.email, keyword))
+            );
         }
-        var propertiesMatch = customer.isNotNull();
         if (!StringUtils.isNullOrEmpty(criteria.getFirstName())) {
-            propertiesMatch = propertiesMatch.and(likeExp(customer.firstName, criteria.getFirstName()));
+            customerPredicate = customerPredicate.and(likeExp(customer.firstName, criteria.getFirstName()));
         }
         if (!StringUtils.isNullOrEmpty(criteria.getLastName())) {
-            propertiesMatch = propertiesMatch.and(likeExp(customer.lastName, criteria.getLastName()));
+            customerPredicate = customerPredicate.and(likeExp(customer.lastName, criteria.getLastName()));
         }
         if (!StringUtils.isNullOrEmpty(criteria.getEmail())) {
-            propertiesMatch = propertiesMatch.and(likeExp(customer.email, criteria.getEmail()));
+            customerPredicate = customerPredicate.and(likeExp(customer.email, criteria.getEmail()));
         }
         if (criteria.getDob() != null) {
-            propertiesMatch = propertiesMatch.and(
+            customerPredicate = customerPredicate.and(
                     customer.dob.isNotNull().and(customer.dob.before(criteria.getDob()).not())
             );
         }
         if (criteria.getDod() != null) {
-            propertiesMatch = propertiesMatch.and(
+            customerPredicate = customerPredicate.and(
                     customer.dod.isNotNull().and(customer.dod.after(criteria.getDod()).not())
             );
         }
         if (criteria.getType() != null) {
-            propertiesMatch = propertiesMatch.and(
+            customerPredicate = customerPredicate.and(
                     customer.type.isNotNull().and(customer.type.eq(criteria.getType()))
             );
         }
-        var finalFilterPredicate = keywordMatch.and(propertiesMatch);
         Pageable pageable = PageRequest.of(
                 criteria.getPage() - 1,
                 criteria.getLimit()
         );
-        return repository.findAll(finalFilterPredicate, pageable);
+        return repository.findAll(customerPredicate, pageable);
     }
 
     BooleanExpression likeExp(StringPath stringPath, String criteriaVal) {
