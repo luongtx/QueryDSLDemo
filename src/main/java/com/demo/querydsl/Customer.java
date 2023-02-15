@@ -24,4 +24,5 @@ public class Customer {
     private String email;
     private LocalDate dob;
     private LocalDate dod;
+    private Character type;
 }

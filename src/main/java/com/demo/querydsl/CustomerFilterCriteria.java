@@ -16,6 +16,7 @@ public class CustomerFilterCriteria extends PageCriteria {
     private String email;
     private LocalDate dob;
     private LocalDate dod;
+    private Character type;
 
     @Builder(builderMethodName = "customerBuilder")
     public CustomerFilterCriteria(
@@ -26,22 +27,17 @@ public class CustomerFilterCriteria extends PageCriteria {
             String lastName,
             String email,
             LocalDate dob,
-            LocalDate dod
+            LocalDate dod,
+            Character type
     ) {
         super(page, limit, sort);
         this.setPage(page != null ? page : 1);
         this.setLimit(limit != null ? limit : 250);
-        this.firstName = concatLike(firstName);
-        this.lastName = concatLike(lastName);
-        this.email = concatLike(email);
-        this.dob = dob != null ? dob : LocalDate.of(-9999, 1, 1);
-        this.dod = dod != null ? dod : LocalDate.of(9999, 12, 31);
-    }
-
-    public static String concatLike(String val) {
-        if (StringUtils.isNullOrEmpty(val)) {
-            return "%%";
-        }
-        return "%" + val + "%";
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.type = type;
+        this.dob = dob;
+        this.dod = dod;
     }
 }
