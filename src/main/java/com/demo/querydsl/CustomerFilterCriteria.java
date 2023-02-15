@@ -34,8 +34,8 @@ public class CustomerFilterCriteria extends PageCriteria {
         this.firstName = concatLike(firstName);
         this.lastName = concatLike(lastName);
         this.email = concatLike(email);
-        this.dob = dob;
-        this.dod = dod;
+        this.dob = dob != null ? dob : LocalDate.of(-9999, 1, 1);
+        this.dod = dod != null ? dod : LocalDate.of(9999, 12, 31);
     }
 
     public static String concatLike(String val) {

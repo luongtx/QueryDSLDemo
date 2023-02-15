@@ -28,7 +28,9 @@ public class CustomerServiceImpl implements CustomerService {
                 .or(customer.email.likeIgnoreCase(keyword));
         var customerPropertiesMatch = customer.firstName.likeIgnoreCase(criteria.getFirstName())
                 .and(customer.lastName.likeIgnoreCase(criteria.getLastName()))
-                .and(customer.email.likeIgnoreCase(criteria.getEmail()));
+                .and(customer.email.likeIgnoreCase(criteria.getEmail()))
+                .and(customer.dob.before(criteria.getDob()).not())
+                .and(customer.dod.after(criteria.getDod()).not());
         var finalFilterPredicate = customerHasKeyword.and(customerPropertiesMatch);
         Pageable pageable = PageRequest.of(
                 criteria.getPage() - 1,
