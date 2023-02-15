@@ -55,11 +55,12 @@ class CustomerServiceTest {
     @Test
     void findAll() {
         var criteria = CustomerFilterCriteria
-                .customerBuilder()
+                .builder()
                 .build();
+        var pageCriteria = PageCriteria.builder().build();
         String keyword = null;
         var expectedCustomers = repository.findAll();
-        var customers = service.findAll(criteria, keyword).getContent();
+        var customers = service.findAll(criteria, pageCriteria, keyword).getContent();
         assertEquals(expectedCustomers.size(), customers.size());
         log.info(customers);
     }
@@ -67,10 +68,11 @@ class CustomerServiceTest {
     @Test
     void findWithKeyWord() {
         var criteria = CustomerFilterCriteria
-                .customerBuilder()
+                .builder()
                 .build();
+        var pageCriteria = PageCriteria.builder().build();
         String keyword = "neves";
-        var customers = service.findAll(criteria, keyword).getContent();
+        var customers = service.findAll(criteria, pageCriteria, keyword).getContent();
         assertEquals(1, customers.size());
         log.info(customers);
     }
@@ -78,12 +80,13 @@ class CustomerServiceTest {
     @Test
     void findWithDateRange() {
         var criteria = CustomerFilterCriteria
-                .customerBuilder()
+                .builder()
                 .dob(LocalDate.of(2000, 1, 1))
                 .dod(LocalDate.of(2055, 1, 1))
                 .build();
+        var pageCriteria = PageCriteria.builder().build();
         String keyword = "";
-        var customers = service.findAll(criteria, keyword).getContent();
+        var customers = service.findAll(criteria, pageCriteria, keyword).getContent();
         assertEquals(4, customers.size());
         log.info(customers);
     }
@@ -91,11 +94,12 @@ class CustomerServiceTest {
     @Test
     void findWithDateRangeNullDod() {
         var criteria = CustomerFilterCriteria
-                .customerBuilder()
+                .builder()
                 .dob(LocalDate.of(2000, 1, 1))
                 .build();
+        var pageCriteria = PageCriteria.builder().build();
         String keyword = "";
-        var customers = service.findAll(criteria, keyword).getContent();
+        var customers = service.findAll(criteria, pageCriteria, keyword).getContent();
         assertEquals(6, customers.size());
         log.info(customers);
     }
@@ -103,11 +107,12 @@ class CustomerServiceTest {
     @Test
     void findWithDateRangeNullDob() {
         var criteria = CustomerFilterCriteria
-                .customerBuilder()
+                .builder()
                 .dod(LocalDate.of(2055, 1, 1))
                 .build();
+        var pageCriteria = PageCriteria.builder().build();
         String keyword = null;
-        var customers = service.findAll(criteria, keyword).getContent();
+        var customers = service.findAll(criteria, pageCriteria, keyword).getContent();
         assertTrue(customers.size() > 0);
         assertEquals(5, customers.size());
         log.info(customers);
@@ -116,11 +121,12 @@ class CustomerServiceTest {
     @Test
     void findWithDateRangeNullDobAndDod() {
         var criteria = CustomerFilterCriteria
-                .customerBuilder()
+                .builder()
                 .build();
+        var pageCriteria = PageCriteria.builder().build();
         String keyword = null;
         var expectedCustomers = repository.findAll();
-        var customers = service.findAll(criteria, keyword).getContent();
+        var customers = service.findAll(criteria, pageCriteria, keyword).getContent();
         assertTrue(customers.size() > 0);
         assertEquals(expectedCustomers.size(), customers.size());
         log.info(customers);
@@ -130,14 +136,37 @@ class CustomerServiceTest {
     @Test
     void findWithTypeC() {
         var criteria = CustomerFilterCriteria
-                .customerBuilder()
+                .builder()
                 .type('C')
                 .build();
+        var pageCriteria = PageCriteria.builder().build();
         String keyword = null;
-        var customers = service.findAll(criteria, keyword).getContent();
+        var customers = service.findAll(criteria, pageCriteria, keyword).getContent();
         assertTrue(customers.size() > 0);
         assertEquals(2, customers.size());
         log.info(customers);
+    }
+
+    @Test
+    void testCustomerWithPageable() {
+        var criteria = CustomerFilterCriteria
+                .builder()
+                .dob(LocalDate.of(1999,1,1))
+                .dod(LocalDate.of(2060,1,1))
+                .build();
+        var pageCriteria = PageCriteria.builder()
+                .page(2)
+                .limit(5)
+                .build();
+        String keyword = null;
+        var page = service.findAll(criteria, pageCriteria, keyword);
+        log.info(page);
+        assertEquals(7, page.getTotalElements());
+        assertEquals(2, page.getTotalPages());
+        assertEquals(1, page.getNumber());
+        var rows = page.getContent();
+        assertEquals(2, rows.size());
+        log.info(rows);
     }
 
 }
