@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.time.LocalDate;
 
 @Entity
 @Data
@@ -21,4 +22,6 @@ public class Customer {
     private String firstName;
     private String lastName;
     private String email;
+    private LocalDate dob;
+    private LocalDate dod;
 }

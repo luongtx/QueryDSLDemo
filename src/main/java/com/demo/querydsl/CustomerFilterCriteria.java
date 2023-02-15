@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -13,6 +14,8 @@ public class CustomerFilterCriteria extends PageCriteria {
     private String firstName;
     private String lastName;
     private String email;
+    private LocalDate dob;
+    private LocalDate dod;
 
     @Builder(builderMethodName = "customerBuilder")
     public CustomerFilterCriteria(
@@ -21,7 +24,9 @@ public class CustomerFilterCriteria extends PageCriteria {
             List<String> sort,
             String firstName,
             String lastName,
-            String email
+            String email,
+            LocalDate dob,
+            LocalDate dod
     ) {
         super(page, limit, sort);
         this.setPage(page != null ? page : 1);
@@ -29,6 +34,8 @@ public class CustomerFilterCriteria extends PageCriteria {
         this.firstName = concatLike(firstName);
         this.lastName = concatLike(lastName);
         this.email = concatLike(email);
+        this.dob = dob;
+        this.dod = dod;
     }
 
     public static String concatLike(String val) {
