@@ -58,12 +58,13 @@ public class CustomerRepositoryCustomImpl implements CustomerRepositoryCustom {
             );
         }
         Pageable pageable = toPageable(pageCriteria);
-        List<Customer> customers = queryFactory.selectFrom(customer)
+        var query = queryFactory.selectFrom(customer)
                 .where(predicate)
                 .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
-        return new PageImpl<>(customers, pageable, customers.size());
+                .limit(pageable.getPageSize());
+        var customers = query.fetch();
+        long totalResults = query.fetchCount();
+        return new PageImpl<>(customers, pageable, totalResults);
     }
 
     BooleanExpression likeExp(StringPath stringPath, String criteriaVal) {
