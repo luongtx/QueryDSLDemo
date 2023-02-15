@@ -3,25 +3,28 @@ package com.demo.querydsl;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.core.util.StringUtils;
-import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.List;
 
-@Component
+@Repository
 public class CustomerRepositoryCustomImpl implements CustomerRepositoryCustom {
-    @PersistenceContext
-    private EntityManager em;
+    private final JPAQueryFactory queryFactory;
+
+    @Autowired
+    public CustomerRepositoryCustomImpl(EntityManager em) {
+        queryFactory = new JPAQueryFactory(em);
+    }
 
     @Override
     public Page<Customer> findAll(CustomerFilterCriteria filterCriteria, PageCriteria pageCriteria, String keyword) {
-        final JPAQuery<Customer> query = new JPAQuery<>(em);
         final QCustomer customer = QCustomer.customer;
         var predicate = customer.isNotNull();
         if (!StringUtils.isNullOrEmpty(keyword)) {
@@ -55,7 +58,7 @@ public class CustomerRepositoryCustomImpl implements CustomerRepositoryCustom {
             );
         }
         Pageable pageable = toPageable(pageCriteria);
-        List<Customer> customers = query.from(customer)
+        List<Customer> customers = queryFactory.selectFrom(customer)
                 .where(predicate)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())

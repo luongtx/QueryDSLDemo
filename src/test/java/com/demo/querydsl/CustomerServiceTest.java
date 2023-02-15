@@ -169,4 +169,25 @@ class CustomerServiceTest {
         log.info(rows);
     }
 
+//    @Test
+//    void testCustomerWithPageableFirstPage() {
+//        var criteria = CustomerFilterCriteria
+//                .builder()
+//                .dob(LocalDate.of(1999,1,1))
+//                .dod(LocalDate.of(2060,1,1))
+//                .build();
+//        var pageCriteria = PageCriteria.builder()
+//                .page(1)
+//                .limit(5)
+//                .build();
+//        String keyword = null;
+//        var page = service.findAll(criteria, pageCriteria, keyword);
+//        log.info(page);
+//        assertEquals(5, page.getTotalElements());
+//        assertEquals(1, page.getTotalPages());
+//        var rows = page.getContent();
+//        assertEquals(5, rows.size());
+//        log.info(rows);
+//    }
+
 }
